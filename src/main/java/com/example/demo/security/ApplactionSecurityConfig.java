@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+
 import static com.example.demo.security.ApplicationUserPermission.COURSE_WRITE;
 import static com.example.demo.security.ApplicationUserRole.*;
 
@@ -33,6 +34,7 @@ public class ApplactionSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
+
               .csrf().disable()
               .authorizeRequests()
               .antMatchers("/", "index", "css/*", "/js/*").permitAll()
@@ -44,7 +46,9 @@ public class ApplactionSecurityConfig extends WebSecurityConfigurerAdapter {
               .anyRequest()
               .authenticated()
               .and()
-              .httpBasic();
+              .formLogin()
+              .loginPage("/login").permitAll();
+              
     }
 
     @Override
