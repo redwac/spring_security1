@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
+import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.security.ApplicationUserPermission.COURSE_WRITE;
 import static com.example.demo.security.ApplicationUserRole.*;
@@ -47,7 +50,23 @@ public class ApplactionSecurityConfig extends WebSecurityConfigurerAdapter {
               .authenticated()
               .and()
               .formLogin()
-              .loginPage("/login").permitAll();
+                .loginPage("/login").permitAll()
+                .defaultSuccessUrl("/courses", true)
+                .passwordParameter("password") // le meme nom password dans la page login
+                .usernameParameter("username")  // le meme nom username dans la page login
+              .and()
+              .rememberMe()//pour que la session se rappeler du compte default 2 week
+                .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
+                .key("somthingVerySecure")
+                .rememberMeParameter("remember-me")// le meme de chechbox remember-me dans la page login
+              .and()
+              .logout()
+                .logoutUrl("/logout")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout","GET"))
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID","remember-me")
+                .logoutSuccessUrl("/login");
               
     }
 
